@@ -1,0 +1,1049 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="SHORTCUT ICON" href="favicon.png">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>OGame - Optimal Defense</title>
+</head>
+<body background="background.jpg" bgcolor="midnightblue" bgproperties="fixed">
+
+<style type="text/css">
+<!--
+BUTTON /* fixes IE */
+{
+	font-size: 10pt;
+}
+body
+{
+	color: #E6EBFB;
+	font-family: Tahoma,sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+.cell
+{
+	padding-right: 5px;
+	padding-left: 5px;
+}
+  -->
+</style>
+
+<script type="text/javascript">
+
+var version = "1.29";
+
+var lang = readCookie ("lang");
+if (! lang)
+	lang = getLang ();
+
+switch (lang)
+{
+	case "bg":
+		// -------------------------- Български ---------------------------------
+		var TechNames =
+		{
+			202: "Малки Транспортьори:",
+			203: "Големи Транспортьори:",
+			204: "Леки Изтребители:",
+			205: "Тежки Изтребители:",
+			206: "Кръстосвачи:",
+			207: "Бойни кораби:",
+			208: "Колонизатори:",
+			209: "Рециклатори:",
+			210: "Шпионски сонди:",
+			211: "Бомбардировачи:",
+			212: "Соларни сателити:",
+			213: "Унищожители:",
+			214: "Звезди на смъртта:",
+			215: "Бойни кръстосвачи:",
+		};
+		var loca =
+		{
+			LOCA_TITLE: "OGame - Оптимална Защита",
+			LOCA_LANG: "Език:",
+			LOCA_OLD_DESIGN: "Старият дизайн (v0.84)",
+			LOCA_NEW_DESIGN: "Новият дизайн (v1.x) ",
+			LOCA_PERCENT_INTO_DEBRIS: "Процент на рециклажа:",
+			LOCA_PLUNDER_PERCENT: "Процент заграбено:",
+			LOCA_PLASMATECH: "Плазмена технология:",
+			LOCA_SPEED_FACTOR: "Скорост на вселената:",
+			LOCA_ALLOFFICERS: "Всички офицери",
+			LOCA_GEOLOGIST: "Геолог",
+			LOCA_FLEET: "Стациониран флот:",
+			LOCA_NUMBER: "Брой:",
+			LOCA_DEBRIS: "Рециклаж:",
+			LOCA_MINES: "Мини:",
+			LOCA_LEVEL: "Ниво:",
+			LOCA_PERCENTAGE: "Процент:",
+			LOCA_BOOSTERS: "Ускорител:",
+			LOCA_PRODUCTION: "Продукция:",
+			LOCA_MMINE: "Мина за метал:",
+			LOCA_CMINE: "Мина за Кристал:",
+			LOCA_DMINE: "Синтезатор за Деутериум:",
+			LOCA_REACTOR: "Ядрен Реактор:",
+			LOCA_MAX_TEMP: "Максимална температура:",
+			LOCA_PRODUCTION: "Обща продукция:",
+			LOCA_HOURLY_PROD: "Обща продукция за час:",
+			LOCA_UNATTENDED: "Брой часове:",
+			LOCA_STORED: "Складирани ресурси",
+			LOCA_DEFENSE: "Необходима защита:",
+			LOCA_RLS: "Ракетни установки:",
+			LOCA_LLASERS: "Леки Лазери:",
+			LOCA_HLASERS: "Тежки лазери:",
+			LOCA_GAUSS: "Гаусови оръдия:",
+			LOCA_PLASMAS: "Плазмени оръдия:",
+			LOCA_DEFENSE_COST: "Цена на защитата:",
+			LOCA_METAL: "Метал:",
+			LOCA_CRYSTAL: "Кристали:",
+			LOCA_DEUTERIUM: "Деутериум:",
+			LOCA_TOTALRES: "Общо ресурси:",
+			LOCA_TOTAL_DEBRIS: "Общо рециклаж:",
+			LOCA_COST: "Обща цена:",
+			LOCA_SIMULATE: "Симулиране",
+		};
+		break;
+	case "fr":
+		// -------------------------- Français ---------------------------------
+		// French translation support by scarface65000
+		var TechNames =
+		{
+			202: "Petit Transporteur",
+			203: "Grand Transporteur",
+			204: "Chasseur Léger",
+			205: "Chasseur Lourd",
+			206: "Croiseur",
+			207: "Vaisseau de bataille",
+			208: "Vaisseau de colonisation",
+			209: "Recycleur",
+			210: "Sonde d'espionnage",
+			211: "Bombardier",
+			212: "Satellite solaire",
+			213: "Destructeur",
+			214: "Étoile de la mort",
+			215: "Traqueur",
+		};
+		var loca =
+		{
+			LOCA_TITLE: "OGame - Défense Optimale",
+			LOCA_LANG: "Langue:",
+			LOCA_OLD_DESIGN: "Ancien Design (v0.84)",
+			LOCA_NEW_DESIGN: "Nouveau Design (v1.x) ",
+			LOCA_PERCENT_INTO_DEBRIS: "Pourcentage dans les débris:",
+			LOCA_PLUNDER_PERCENT: "Pourcentage de pillage:",
+			LOCA_PLASMATECH: "Technologie Plasma:",
+			LOCA_SPEED_FACTOR: "Vitesse du jeu",
+			LOCA_ALLOFFICERS: "Tous les officiers",
+			LOCA_GEOLOGIST: "Géologue",
+			LOCA_FLEET: "Flotte à quai:",
+			LOCA_NUMBER: "Nombre:",
+			LOCA_DEBRIS: "Débris:",
+			LOCA_MINES: "Mines:",
+			LOCA_LEVEL: "Niveau:",
+			LOCA_PERCENTAGE: "Pourcentage:",
+			LOCA_BOOSTERS: "Booster:",
+			LOCA_PRODUCTION: "Production:",
+			LOCA_MMINE: "Mine de Métal:",
+			LOCA_CMINE: "Mine de Cristal:",
+			LOCA_DMINE: "Synthétiseur de Deutérium:",
+			LOCA_REACTOR: "Centrale électrique de Fusion:",
+			LOCA_MAX_TEMP: "Température Maximale:",
+			LOCA_PRODUCTION: "Production Totale:",
+			LOCA_HOURLY_PROD: "Production Totale/heure:",
+			LOCA_UNATTENDED: "Nb d'Heures sans surveillance:",
+			LOCA_STORED: "Ressources stockées:",
+			LOCA_DEFENSE: "Défense nécessaire:",
+			LOCA_RLS: "Lanceurs de missile:",
+			LOCA_LLASERS: "Artillerie laser légère:",
+			LOCA_HLASERS: "Artillerie laser lourde:",
+			LOCA_GAUSS: "Canon électromagnétique:",
+			LOCA_PLASMAS: "Lanceur de Plasma:",
+			LOCA_DEFENSE_COST: "Coût de la Défense:",
+			LOCA_METAL: "Métal:",
+			LOCA_CRYSTAL: "Cristal:",
+			LOCA_DEUTERIUM: "Deutérium:",
+			LOCA_TOTALRES: "Total des Ressources:",
+			LOCA_TOTAL_DEBRIS: "Débris Totaux:",
+			LOCA_COST: "Coût Total:",
+			LOCA_SIMULATE: "Lancer SpeedSim",
+		};
+		break;
+	case "pt":
+		// -------------------------- Português (default) ---------------------------------
+		// Translated by Tiago Ferreira - Sturgis
+		var TechNames =
+		{
+			202: "Cargueiro Pequeno:",
+			203: "Cargueiro Grande:",
+			204: "Caça Ligeiro:",
+			205: "Caça Pesado:",
+			206: "Cruzadpr:",
+			207: "Nave de Batalha:",
+			208: "Nave deColonização:",
+			209: "Recicladores:",
+			210: "Sonda de Espionagem:",
+			211: "Bombardeiro:",
+			212: "Satelite Solar:",
+			213: "Destruidor:",
+			214: "Estrela da Morte:",
+			215: "Interceptor:",
+		};
+		var loca =
+		{
+			LOCA_TITLE: "OGame - Optimização da Defesa",
+			LOCA_LANG: "Lingua:",
+			LOCA_OLD_DESIGN: "Design Antigo (v0.84)",
+			LOCA_NEW_DESIGN: "Novo Design (v1.x) ",
+			LOCA_PERCENT_INTO_DEBRIS: "Percentagem de Destroços:",
+			LOCA_PLUNDER_PERCENT: "Percentagem de roubo:",
+			LOCA_PLASMATECH: "Tecnologia Plasma:",
+			LOCA_SPEED_FACTOR: "Factor Velocidade:",
+			LOCA_ALLOFFICERS: "Todos os Oficiais",
+			LOCA_GEOLOGIST: "Geologo",
+			LOCA_FLEET: "Frota Parada:",
+			LOCA_NUMBER: "Numero:",
+			LOCA_DEBRIS: "Destroços:",
+			LOCA_MINES: "Minas:",
+			LOCA_LEVEL: "Nivel:",
+			LOCA_PERCENTAGE: "Percentagem:",
+			LOCA_BOOSTERS: "Reforço:",
+			LOCA_PRODUCTION: "Produção:",
+			LOCA_MMINE: "Mina de Metal:",
+			LOCA_CMINE: "Mina de Cristal:",
+			LOCA_DMINE: "Sintetizador de Deutério:",
+			LOCA_REACTOR: "Planta de Fusão:",
+			LOCA_MAX_TEMP: "Temperatura Máxima:",
+			LOCA_PRODUCTION: "Produção total:",
+			LOCA_HOURLY_PROD: "Produção total/hora:",
+			LOCA_UNATTENDED: "Horas offline:",
+			LOCA_STORED: "Recursos Armazenados:",
+			LOCA_DEFENSE: "Defesa Necessária:",
+			LOCA_RLS: "Lançador de Misseis:",
+			LOCA_LLASERS: "Laser Ligeiro:",
+			LOCA_HLASERS: "Laser Pesado:",
+			LOCA_GAUSS: "Canhão de Gauss:",
+			LOCA_PLASMAS: "Canhão Plasma:",
+			LOCA_DEFENSE_COST: "Custo da Defesa:",
+			LOCA_METAL: "Metal:",
+			LOCA_CRYSTAL: "Cristal:",
+			LOCA_DEUTERIUM: "Deuterio:",
+			LOCA_TOTALRES: "Recursos Totais:",
+			LOCA_TOTAL_DEBRIS: "Destroços Totais:",
+			LOCA_COST: "Custo total:",
+			LOCA_SIMULATE: "SpeedSim Me!",
+		};
+		break;
+	case "ru":
+		// -------------------------- Русский ---------------------------------
+		var TechNames =
+		{
+			202: "Малые транспорты:",
+			203: "Большие транспорты:",
+			204: "Лёгкие истребители:",
+			205: "Тяжёлые истребители:",
+			206: "Крейсеры:",
+			207: "Линкоры:",
+			208: "Колонизаторы:",
+			209: "Переработчики:",
+			210: "Шпионский зонды:",
+			211: "Бомбардировщики:",
+			212: "Солнечный спутники:",
+			213: "Уничтожители:",
+			214: "Звезды смерти:",
+			215: "Линейные крейсеры:",
+		};
+		var loca =
+		{
+			LOCA_TITLE: "OGame - Оптимальная Оборона",
+			LOCA_LANG: "Язык:",
+			LOCA_OLD_DESIGN: "Старый дизайн (v0.84)",
+			LOCA_NEW_DESIGN: "Редизайн (v1.x) ",
+			LOCA_PERCENT_INTO_DEBRIS: "Процент лома:",
+			LOCA_PLUNDER_PERCENT: "Процент захвата:",
+			LOCA_PLASMATECH: "Плазменная технология:",
+			LOCA_SPEED_FACTOR: "Коэффициент ускорения:",
+			LOCA_ALLOFFICERS: "Все офицеры",
+			LOCA_GEOLOGIST: "Геолог +10% доход от шахты",
+			LOCA_FLEET: "Незасейвленный Флот:",
+			LOCA_NUMBER: "Кол-во:",
+			LOCA_DEBRIS: "Лома:",
+			LOCA_MINES: "Шахты:",
+			LOCA_LEVEL: "Уровень:",
+			LOCA_PERCENTAGE: "Процент:",
+			LOCA_BOOSTERS: "Ускоритель:",
+			LOCA_PRODUCTION: "Выработка в час:",
+			LOCA_MMINE: "Рудник по добыче металла:",
+			LOCA_CMINE: "Рудник по добыче кристалла:",
+			LOCA_DMINE: "Синтезатор дейтерия:",
+			LOCA_REACTOR: "Термоядерная электростанция:",
+			LOCA_MAX_TEMP: "Максимальная температура:",
+			LOCA_PRODUCTION: "Общая выработка:",
+			LOCA_HOURLY_PROD: "Выработка в час:",
+			LOCA_UNATTENDED: "Часов простоя:",
+			LOCA_STORED: "Хранимые ресурсы:",
+			LOCA_DEFENSE: "Нужно обороны:",
+			LOCA_RLS: "Ракетные установки:",
+			LOCA_LLASERS: "Лёгкие лазеры:",
+			LOCA_HLASERS: "Тяжёлые лазеры:",
+			LOCA_GAUSS: "Пушки Гаусса:",
+			LOCA_PLASMAS: "Плазменные орудия:",
+			LOCA_DEFENSE_COST: "Стоимость обороны:",
+			LOCA_METAL: "Металл:",
+			LOCA_CRYSTAL: "Кристалл:",
+			LOCA_DEUTERIUM: "Дейтерий:",
+			LOCA_TOTALRES: "Всего ресурсов:",
+			LOCA_TOTAL_DEBRIS: "Всего лома:",
+			LOCA_COST: "Общая стоимость:",
+			LOCA_SIMULATE: "Симулировать",
+		};
+		break;
+	default:
+		lang = "en";
+		createCookie ("lang", "en", 9999);
+	case "en":
+		// -------------------------- English (default) ---------------------------------
+		var TechNames =
+		{
+			202: "Small Cargoes:",
+			203: "Large Cargoes:",
+			204: "Light Fighters:",
+			205: "Heavy Fighters:",
+			206: "Cruisers:",
+			207: "Battleships:",
+			208: "Colony Ships:",
+			209: "Recyclers:",
+			210: "Espionage Probes:",
+			211: "Bombers:",
+			212: "Solar Satellites:",
+			213: "Destroyers:",
+			214: "Death Stars:",
+			215: "Battlecruisers:",
+		};
+		var loca =
+		{
+			LOCA_TITLE: "OGame - Optimal Defense",
+			LOCA_LANG: "Language:",
+			LOCA_OLD_DESIGN: "Old Design (v0.84)",
+			LOCA_NEW_DESIGN: "New Design (v1.x) ",
+			LOCA_PERCENT_INTO_DEBRIS: "Percentage of debris:",
+			LOCA_PLUNDER_PERCENT: "Plunder pecent:",
+			LOCA_PLASMATECH: "Plasma Technology:",
+			LOCA_SPEED_FACTOR: "Speed Factor:",
+			LOCA_ALLOFFICERS: "All Officers",
+            LOCA_COLLECTOR: "Collector class",
+			LOCA_GEOLOGIST: "Geologist",
+			LOCA_FLEET: "Stationed Fleet:",
+			LOCA_NUMBER: "Number:",
+			LOCA_DEBRIS: "Debris:",
+			LOCA_MINES: "Mines:",
+			LOCA_LEVEL: "Level:",
+			LOCA_PERCENTAGE: "Percentage:",
+			LOCA_BOOSTERS: "Booster:",
+			LOCA_PRODUCTION: "Production:",
+			LOCA_MMINE: "Metal Mine:",
+			LOCA_CMINE: "Crystal Mine:",
+			LOCA_DMINE: "Deuterium Synthesizer:",
+			LOCA_REACTOR: "Fusion Reactor:",
+			LOCA_MAX_TEMP: "Maximal Temperature:",
+			LOCA_PRODUCTION: "Total Production:",
+			LOCA_HOURLY_PROD: "Total Production/hour:",
+			LOCA_UNATTENDED: "Hours Unattended:",
+			LOCA_STORED: "Stored Resources:",
+			LOCA_DEFENSE: "Necessary Defenses:",
+			LOCA_RLS: "Rocket Launchers:",
+			LOCA_LLASERS: "Light Lasers:",
+			LOCA_HLASERS: "Heavy Lasers:",
+			LOCA_GAUSS: "Gauss Cannons:",
+			LOCA_PLASMAS: "Plasma Turrets:",
+			LOCA_DEFENSE_COST: "Defense Cost:",
+			LOCA_METAL: "Metal:",
+			LOCA_CRYSTAL: "Crystal:",
+			LOCA_DEUTERIUM: "Deuterium:",
+			LOCA_TOTALRES: "Total Resources:",
+			LOCA_TOTAL_DEBRIS: "Total Debris:",
+			LOCA_COST: "Total Cost:",
+			LOCA_SIMULATE: "SpeedSim Me!",
+		};
+		break;
+}
+
+document.title = loca ["LOCA_TITLE"];
+
+function createCookie (name, value, days)
+{
+	var expires = "";
+	if (days)
+	{
+		var date = new Date ();
+		date.setTime (date.getTime () + (days * 24 * 60 * 60 * 1000));
+		expires = "; expires=" + date.toGMTString ();
+	}
+	document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function readCookie (name)
+{
+	var nameEQ = name + "=";
+	var ca = document.cookie.split (";");
+	for (var i = 0; i < ca.length; i++)
+	{
+		var c = ca [i];
+		while (c.charAt (0) == " ")
+			c = c.substring (1, c.length);
+		if (c.indexOf (nameEQ) == 0)
+			return c.substring (nameEQ.length, c.length);
+	}
+	return null;
+}
+
+function getLang ()
+{
+	var langcode;
+	if (typeof navigator.browserLanguage == "string")  // IE
+		langcode = navigator.browserLanguage;
+	else
+		langcode = navigator.language;
+	return langcode.substr (0, 2).toLowerCase ();
+}
+
+function onLangChange ()
+{
+	createCookie ("lang", document.lang_form.lang.value, 9999);
+	window.location.reload ();
+}
+
+function retPosNum (s)
+{
+	var sxx = "";
+	s += "";
+	var sx = s.toUpperCase ();
+	for (var i = 0; i < sx.length; i++)
+		if (sx.charCodeAt (i) >= 48 && sx.charCodeAt (i) <= 57)
+			sxx += sx.charAt (i);
+	return sxx.replace (/^0(\d+)/, "$1");
+}
+
+function retInt (s)
+{
+	var sxx = "";
+	s += "";
+	var sx = s.toUpperCase ();
+	var firstDigit = true;
+	var signFound = false;
+	for (var i = 0; i < sx.length; i++)
+	{
+		if (sx.charCodeAt (i) >= 49 && sx.charCodeAt (i) <= 57)
+		{
+			sxx += sx.charAt (i);
+			firstDigit = false;
+		}
+		else if (sx.charCodeAt (i) == 48 && ! firstDigit)
+			sxx += sx.charAt (i);
+		else if (sx.charCodeAt (i) == 45 && firstDigit && ! signFound)
+			signFound = true;
+	}
+	if (signFound)
+		sxx = "-" + sxx;
+	return sxx;
+}
+
+function chkval (id)
+{
+	if (id.value == "")
+		id.value = "0";
+}
+
+function chkPosNum (id)
+{
+	if (id.value != retPosNum (id.value))
+		id.value = retPosNum (id.value);
+	chkval (id);
+}
+
+function chkInt (id)
+{
+	if (id.value != retInt (id.value))
+		id.value = retInt (id.value);
+	chkval (id);
+}
+
+function addDots (n)
+{
+	if (isNaN (n))
+		return "0";
+	n += "";
+	var rgx = /(\d+)(\d{3})/;
+	while (rgx.test (n))
+		n = n.replace (rgx, "$1" + "." + "$2");
+	return n;
+}
+
+function toggleOfficers (all)
+{
+	if (all)
+	{
+		if (document.getElementById ("allOfficers").checked)
+			document.getElementById ("geologist").checked = true;
+	}
+	else
+	{
+		if (! document.getElementById ("geologist").checked)
+			document.getElementById ("allOfficers").checked = false;
+	}
+}
+
+function compute ()
+{
+	var debris = [
+		["SC",    4000],
+		["LC",   12000],
+		["LF",    4000],
+		["HF",   10000],
+		["CR",   27000],
+		["BS",   60000],
+		["CS",   30000],
+		["RC",   16000],
+		["EP",    1000],
+		["BM",   75000],
+		["SS",    2000],
+		["DR",  110000],
+		["DS", 9000000],
+		["BC",   70000]
+	];
+	var totDebris = 0;
+	var percentDebris = document.getElementById ("percentIntoDebris").value;
+	if (percentDebris > 99)
+	{
+		percentDebris = 99;
+		document.getElementById ("percentIntoDebris").value = percentDebris;
+	}
+	for (var i = 0; i < debris.length; i++)
+	{
+		var thisDebris = parseInt (document.getElementById ("num" + debris [i] [0]).value) * debris [i] [1] * percentDebris / 100;
+		document.getElementById ("debris" + debris [i] [0]).firstChild.nodeValue = addDots (thisDebris);
+		totDebris += thisDebris;
+	}
+	document.getElementById ("debrisTotal").firstChild.nodeValue = addDots (totDebris);
+	var option, level, pct;
+	var geologist = document.getElementById ("geologist").checked;
+	var allOfficers = document.getElementById ("allOfficers").checked;
+	var collector = document.getElementById ("collector").checked;
+	var plasmaTech  = parseInt (document.getElementById ("plasmaTech").value);
+	var speedFactor = parseInt (document.getElementById ("speedFactor").value);
+	var oldVersion = document.getElementById ("oldVersion").checked;
+	var booster = 1.0;
+	option = document.getElementById ("metPct");
+	level  = parseInt (document.getElementById ("metLevel").value);
+	if (isNaN (level))
+		level = 0;
+	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
+	var metProd = Math.round (30 * level * Math.pow (1.1, level)) * pct;
+	if (! oldVersion)
+	{
+		if (allOfficers)
+			booster += 0.102;
+		else if (geologist)
+			booster += 0.1;
+		booster += plasmaTech * 0.01;
+        if (collector) booster += 0.25;
+	}
+	option = document.getElementById ("metBooster");
+	pct = parseInt (option.options [option.selectedIndex].value) / 100;
+	booster += pct;
+	metProd *= booster;
+	metProd += (oldVersion) ? 20 : 30;
+	metProd *= speedFactor;
+	metProd = (oldVersion) ? Math.floor (metProd) : Math.round (metProd);
+	document.getElementById ("metProd").firstChild.nodeValue = addDots (metProd);
+	booster = 1.0;
+	option = document.getElementById ("cryPct");
+	level  = parseInt (document.getElementById ("cryLevel").value);
+	if (isNaN (level))
+		level = 0;
+	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
+	var cryProd = Math.round (20 * level * Math.pow (1.1, level)) * pct;
+	if (! oldVersion)
+	{
+		if (allOfficers)
+			booster += 0.102;
+		else if (geologist)
+			booster += 0.1;
+		booster += plasmaTech * 0.0066;
+        if (collector) booster += 0.25;
+	}
+	option = document.getElementById ("cryBooster");
+	pct = parseInt (option.options [option.selectedIndex].value) / 100;
+	booster += pct;
+	cryProd *= booster;
+	cryProd += (oldVersion) ? 10 : 15;
+	cryProd *= speedFactor;
+	cryProd = (oldVersion) ? Math.floor (cryProd) : Math.round (cryProd);
+	document.getElementById ("cryProd").firstChild.nodeValue = addDots (cryProd);
+	booster = 1.0;
+	option = document.getElementById ("deuPct");
+	level  = parseInt (document.getElementById ("deuLevel").value);
+	if (isNaN (level))
+		level = 0;
+	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
+	var deuProd = 10 * level * Math.pow (1.1, level);
+	if (! oldVersion)
+	{
+		if (allOfficers)
+			booster += 0.102;
+		else if (geologist)
+			booster += 0.1;
+            if (collector) booster += 0.25;
+	}
+	deuProd *= (oldVersion) ?
+				(1.28 - 0.002 * parseInt (document.getElementById ("maxTemp").value)) * pct :
+				(1.44 - 0.004 * parseInt (document.getElementById ("maxTemp").value)) * pct;
+	option = document.getElementById ("deuBooster");
+	pct = parseInt (option.options [option.selectedIndex].value) / 100;
+	booster += pct;
+	deuProd *= booster;
+	deuProd *= speedFactor;
+	deuProd = (oldVersion) ? Math.floor (deuProd) : Math.round (deuProd);
+	document.getElementById ("deuProd").firstChild.nodeValue = addDots (deuProd);
+	option = document.getElementById ("fusPct");
+	level  = parseInt (document.getElementById ("fusLevel").value);
+	if (isNaN (level))
+		level = 0;
+	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
+	var fusProd = 10 * level * Math.pow (1.1, level) * pct;
+	if (fusProd > deuProd)
+		fusProd = deuProd;
+	fusProd = Math.floor (fusProd);
+	fusProd = -fusProd;
+	fusProd *= speedFactor;
+	document.getElementById ("fusProd").firstChild.nodeValue = addDots (fusProd);
+	var totalProdPerHour = metProd + cryProd + deuProd + fusProd;
+	document.getElementById ("prodHour").firstChild.nodeValue = addDots (Math.floor (totalProdPerHour));
+	var hours = parseInt (document.getElementById ("hours").value);
+	var totalProd = (metProd + cryProd + deuProd + fusProd) * hours;
+	document.getElementById ("totalProd").firstChild.nodeValue = addDots (Math.floor (totalProd));
+	var producedMetal     = Math.floor (metProd) * hours;
+	var producedCrystal   = Math.floor (cryProd) * hours;
+	var producedDeuterium = Math.floor ((deuProd + fusProd)) * hours;
+	document.getElementById ("totalProdDetails").firstChild.nodeValue = "(" +
+		addDots (producedMetal) + " + " + addDots (producedCrystal) + " + " + addDots (producedDeuterium) + ")";
+	var storedMetal     = parseInt (document.getElementById ("storedMetal").value);
+	var storedCrystal   = parseInt (document.getElementById ("storedCrystal").value);
+	var storedDeuterium = parseInt (document.getElementById ("storedDeuterium").value);
+	var totalStored = storedMetal + storedCrystal + storedDeuterium;
+	document.getElementById ("totalResDetails").firstChild.nodeValue = "(" +
+		addDots (producedMetal + storedMetal) + " + " + addDots (producedCrystal + storedCrystal) + " + " + addDots (producedDeuterium + storedDeuterium) + ")";
+	option = document.getElementById ("plunderPct");
+	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
+	var totalLoot = totDebris + ((totalProd + totalStored) * pct);
+	var neededPT = Math.ceil (5.0658556 * totalLoot * (70 / (100 - percentDebris)) / 100000);
+	var neededGC = Math.ceil (totalLoot / (10000 * ((100 - percentDebris) / 100)) - neededPT);
+	if (neededGC < 0)
+		neededGC = 0;
+	var neededHL = Math.ceil ((totalLoot / (4000 * ((100 - percentDebris) / 100)) - neededPT - neededGC) / 0.6);
+	if (neededHL < 0)
+		neededHL = 0;
+	var neededLL = Math.ceil (totalLoot / (1000 * ((100 - percentDebris) / 100)) - neededPT - neededGC - neededHL);
+	if (neededLL < 0)
+		neededLL = 0;
+	var neededRL = Math.ceil (neededLL * 2 / 3);
+	neededLL = Math.ceil (neededLL / 3);
+	document.getElementById ("neededRL").firstChild.nodeValue = addDots (neededRL);
+	document.getElementById ("neededLL").firstChild.nodeValue = addDots (neededLL);
+	document.getElementById ("neededHL").firstChild.nodeValue = addDots (neededHL);
+	document.getElementById ("neededGC").firstChild.nodeValue = addDots (neededGC);
+	document.getElementById ("neededPT").firstChild.nodeValue = addDots (neededPT);
+	var totalMet = 2000 * neededRL + 1500 * neededLL + 6000 * neededHL + 20000 * neededGC + 50000 * neededPT;
+	var totalCry =                    500 * neededLL + 2000 * neededHL + 15000 * neededGC + 50000 * neededPT;
+	var totalDeu =                                                        2000 * neededGC + 30000 * neededPT;
+	var totalRes = totalMet + totalCry + totalDeu;
+	document.getElementById ("metTotal").firstChild.nodeValue = addDots (totalMet);
+	document.getElementById ("cryTotal").firstChild.nodeValue = addDots (totalCry);
+	document.getElementById ("deuTotal").firstChild.nodeValue = addDots (totalDeu);
+	document.getElementById ("totalLC").firstChild.nodeValue  = addDots (addDots (Math.ceil (totalRes / 25000)));
+	document.getElementById ("totalSC").firstChild.nodeValue  = addDots (addDots (Math.ceil (totalRes /  5000)));
+}
+
+function onVersionChange ()
+{
+	if (document.getElementById ("oldVersion").checked)
+	{
+		document.getElementById ("plunderPct").value = "50%";
+		document.body.background = "background.jpg";
+		createCookie ("ver", "old", 9999);
+	}
+	else
+	{
+		document.getElementById ("plunderPct").value = "75%";
+		document.body.background = "background_new.jpg";
+		var ver = readCookie ("ver");
+		if (ver == "old")
+			createCookie ("ver", "new", 9999);
+	}
+	compute ()
+}
+
+function speedSim ()
+{
+	var number, i;
+	var resNames = ["metal", "crystal", "deut"];
+	var defNames = [["RL", 14], ["LL", "15"], ["HL", "16"], ["GC", "17"], ["PT", "19"]];
+	var shipNames = ["SC", "LC", "LF", "HF", "CR", "BS", "CS", "RC", "EP", "BM", "SS", "DR", "DS", "BC"];
+	var url = "http://websim.speedsim.net/?lang=" + lang;
+	var res = document.getElementById ("totalProdDetails").firstChild.nodeValue.replace (/[\. ]+/g, "").split (/\D+/);
+	for (i = 0; i < resNames.length; i++)
+	{
+		number = parseInt (res [i + 1]);
+		if (number > 0)
+			url += "&enemy_" + resNames [i] + "=" + number;
+	}
+	for (i = 0; i < shipNames.length; i++)
+	{
+		number = document.getElementById ("num" + shipNames [i]).value;
+		if (number > 0)
+			url += "&ship_d0_" + i + "_b="   + number;
+	}
+	for (i = 0; i < defNames.length; i++)
+	{
+		number = document.getElementById ("needed" + defNames [i] [0]).firstChild.nodeValue.replace (/\D+/, "");
+		if (number)
+			url += "&ship_d0_" + defNames [i] [1] + "_b="  + number;
+	}
+	url += "&perc-df=" + document.getElementById ("percentIntoDebris").value;
+	window.open (url);
+}
+
+function clearFleet ()
+{
+	var shipNames = ["SC", "LC", "LF", "HF", "CR", "BS", "CS", "RC", "EP", "BM", "SS", "DR", "DS", "BC"];
+	for (var i = 0; i < shipNames.length; i++)
+		document.getElementById ("num" + shipNames [i]).value = 0;
+	compute ();
+}
+
+function clearMines ()
+{
+	var mineNames = ["met", "cry", "deu", "fus"];
+	for (var i = 0; i < mineNames.length; i++)
+	{
+		document.getElementById (mineNames [i] + "Level").value = 0;
+		document.getElementById (mineNames [i] + "Pct").value = "100%";
+	}
+	document.getElementById ("maxTemp").value         = 0;
+	document.getElementById ("hours").value           = 0;
+	document.getElementById ("storedMetal").value     = 0;
+	document.getElementById ("storedCrystal").value   = 0;
+	document.getElementById ("storedDeuterium").value = 0;
+	compute ();
+}
+
+window.onload = function ()
+{
+	var langEl = document.lang_form.lang;
+ 	for (i = 0; i < langEl.length; i++)
+		if (langEl.options [i].value == lang)
+		{
+			langEl.options.selectedIndex = i;
+			break;
+		}
+	var ver = readCookie ("ver");
+	if (ver == "old")
+		document.getElementById ("oldVersion").checked = true;
+	else
+		document.getElementById ("newVersion").checked = true;
+	onVersionChange ();
+}
+
+</script>
+
+<div id="lang" style="position: absolute; top: 10px; right: 10px;">
+<form name="lang_form">
+<script>document.write (loca ["LOCA_LANG"]);</script> <select name="lang" onchange="onLangChange ();">
+<option value="en">English</option>
+<option value="bg">Български</option>
+<option value="fr">Français</option>
+<option value="pt">Português</option>
+<option value="ru">Русский</option>
+</select>
+</form>
+</div>
+
+<center>
+<h1><script>document.write (loca ["LOCA_TITLE"]);</script></h1>
+<table border="1" cellpadding="2">
+  <tr>
+    <td class="cell" rowspan="2" colspan="2">
+      <table width="100%">
+        <tr>
+          <td class="cell" align="left" colspan="2">
+            <input type="radio" id="oldVersion" name="version" value="old" CHECKED onchange="onVersionChange ();"><script>document.write (loca ["LOCA_OLD_DESIGN"]);</script>
+          </td>
+        </tr>
+        <tr>
+          <td class="cell" align="left" colspan="2">
+            <input type="radio" id="newVersion" name="version" value="new" onchange="onVersionChange ();"><script>document.write (loca ["LOCA_NEW_DESIGN"]);</script>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td class="cell" align="center" colspan="3">
+      <script>document.write (loca ["LOCA_PERCENT_INTO_DEBRIS"]);</script>&nbsp;<input id="percentIntoDebris" size="1" value="30" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();">&nbsp;%
+    </td>
+    <td class="cell" align="right" colspan="3">
+      <table width="100%">
+        <tr>
+          <td align="left"><script>document.write (loca ["LOCA_PLASMATECH"]);</script>&nbsp;<input id="plasmaTech" name="plasmaTech"  size="1" value="7" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+          <td><script>document.write (loca ["LOCA_SPEED_FACTOR"]);</script>&nbsp;<input id="speedFactor" size="1" value="1" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+        <tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="cell" align="center" colspan="3">
+      &nbsp;<script>document.write (loca ["LOCA_PLUNDER_PERCENT"]);</script>&nbsp;
+      <select id="plunderPct" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option value="50%">50%</option>
+        <option selected="selected" value="75%">75%</option>
+        <option value="100%">100%</option>
+      </select>
+    </td>
+    <td class="cell" align="right" colspan="3">
+      <table width="100%">
+        <tr>
+          <td align="left"><input type="checkbox" id="allOfficers" name="allOfficers" onclick="toggleOfficers (true); compute ();">&nbsp;<script>document.write (loca ["LOCA_ALLOFFICERS"]);</script></td>
+          <td align="center"><input type="checkbox" id="collector" name="collector" onclick="compute ();">&nbsp;<script>document.write (loca ["LOCA_COLLECTOR"]);</script></td>
+          <td align="right"><input type="checkbox" id="geologist" name="geologist" onclick="toggleOfficers (false); compute ();">&nbsp;<script>document.write (loca ["LOCA_GEOLOGIST"]);</script></td>
+        <tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_FLEET"]);</script></td>
+    <td class="cell" align="center"><button id="clearFleet" name="x" type="button" onclick="clearFleet ();">x</button>&nbsp;<script>document.write (loca ["LOCA_NUMBER"]);</script></td>
+    <td class="cell" align="center" width="80"><script>document.write (loca ["LOCA_DEBRIS"]);</script></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_MINES"]);</script></td>
+    <td class="cell" align="center"><button id="clearMines" name="x" type="button" onclick="clearMines ();">x</button>&nbsp;<script>document.write (loca ["LOCA_LEVEL"]);</script></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_PERCENTAGE"]);</script></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_BOOSTERS"]);</script></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_PRODUCTION"]);</script></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [202]);</script></td>
+    <td class="cell" align="right"><input id="numSC" size="11" value="0" tabindex="1" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisSC">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_MMINE"]);</script></td>
+    <td class="cell" align="right"><input id="metLevel" size="12" value="0" tabindex="15" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="center">
+      <select id="metPct" tabindex="19" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="100%">100%</option>
+        <option value="90%">90%</option>
+        <option value="80%">80%</option>
+        <option value="70%">70%</option>
+        <option value="60%">60%</option>
+        <option value="50%">50%</option>
+        <option value="40%">40%</option>
+        <option value="30%">30%</option>
+        <option value="20%">20%</option>
+        <option value="10%">10%</option>
+        <option value="0%">0%</option>
+      </select>
+    </td>
+    <td class="cell" align="center">
+      <select id="metBooster" tabindex="23" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="0%">0%</option>
+        <option value="10%">10%</option>
+        <option value="20%">20%</option>
+        <option value="30%">30%</option>
+      </select>
+    </td>
+    <td class="cell" align="right"><span id="metProd">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [203]);</script></td>
+    <td class="cell" align="right"><input id="numLC" size="11" value="0" tabindex="2" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisLC">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_CMINE"]);</script></td>
+    <td class="cell" align="right"><input id="cryLevel" size="12" value="0" tabindex="16" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="center">
+      <select id="cryPct" tabindex="20" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="100%">100%</option>
+        <option value="90%">90%</option>
+        <option value="80%">80%</option>
+        <option value="70%">70%</option>
+        <option value="60%">60%</option>
+        <option value="50%">50%</option>
+        <option value="40%">40%</option>
+        <option value="30%">30%</option>
+        <option value="20%">20%</option>
+        <option value="10%">10%</option>
+        <option value="0%">0%</option>
+      </select>
+    </td>
+    <td class="cell" align="center">
+      <select id="cryBooster" tabindex="24" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="0%">0%</option>
+        <option value="10%">10%</option>
+        <option value="20%">20%</option>
+        <option value="30%">30%</option>
+      </select>
+    </td>
+    <td class="cell" align="right"><span id="cryProd">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [204]);</script></td>
+    <td class="cell" align="right"><input id="numLF" size="11" value="0" tabindex="3" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisLF">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_DMINE"]);</script></td>
+    <td class="cell" align="right"><input id="deuLevel" size="12" value="0" tabindex="17" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="center">
+      <select id="deuPct" tabindex="21" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="100%">100%</option>
+        <option value="90%">90%</option>
+        <option value="80%">80%</option>
+        <option value="70%">70%</option>
+        <option value="60%">60%</option>
+        <option value="50%">50%</option>
+        <option value="40%">40%</option>
+        <option value="30%">30%</option>
+        <option value="20%">20%</option>
+        <option value="10%">10%</option>
+        <option value="0%">0%</option>
+      </select>
+    </td>
+    <td class="cell" align="center">
+      <select id="deuBooster" tabindex="25" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="0%">0%</option>
+        <option value="10%">10%</option>
+        <option value="20%">20%</option>
+        <option value="30%">30%</option>
+      </select>
+    </td>
+    <td class="cell" align="right"><span id="deuProd">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [205]);</script></td>
+    <td class="cell" align="right"><input id="numHF" size="11" value="0" tabindex="4" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisHF">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_REACTOR"]);</script></td>
+    <td class="cell" align="right"><input id="fusLevel" size="12" value="0" tabindex="18" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="center">
+      <select id="fusPct" tabindex="22" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
+        <option selected="selected" value="100%">100%</option>
+        <option value="90%">90%</option>
+        <option value="80%">80%</option>
+        <option value="70%">70%</option>
+        <option value="60%">60%</option>
+        <option value="50%">50%</option>
+        <option value="40%">40%</option>
+        <option value="30%">30%</option>
+        <option value="20%">20%</option>
+        <option value="10%">10%</option>
+        <option value="0%">0%</option>
+      </select>
+    </td>
+    <td class="cell" align="center"></td>
+    <td class="cell" align="right"><font color="red"><span id="fusProd">0</span></font></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [206]);</script></td>
+    <td class="cell" align="right"><input id="numCR" size="11" value="0" tabindex="5" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisCR">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_MAX_TEMP"]);</script></td>
+    <td class="cell" align="right"><input id="maxTemp" size="12" value="0" tabindex="26" style="text-align: right" onblur="chkval (this);" onkeyup="chkInt (this); compute ();"></td>
+    <td class="cell" colspan="3" align="center"><script>document.write (loca ["LOCA_PRODUCTION"]);</script></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [207]);</script></td>
+    <td class="cell" align="right"><input id="numBS" size="11" value="0" tabindex="6" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisBS">0</span></td>
+    <td class="cell" align="right"><script>document.write (loca ["LOCA_HOURLY_PROD"]);</script></td>
+    <td class="cell" align="right"><span id="prodHour">0</span></td>
+    <td class="cell" colspan="3" align="right"><span id="totalProd">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [208]);</script></td>
+    <td class="cell" align="right"><input id="numCS" size="11" value="0" tabindex="7" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisCS">0</span></td>
+    <td class="cell" align="right"><script>document.write (loca ["LOCA_UNATTENDED"]);</script></td>
+    <td class="cell" align="right"><input id="hours" size="12" value="0" tabindex="27" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" colspan="3"><span id="totalProdDetails">(0 + 0 + 0)</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [209]);</script></td>
+    <td class="cell" align="right"><input id="numRC" size="11" value="0" tabindex="8" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisRC">0</span></td>
+    <td class="cell" align="center" colspan="2"><script>document.write (loca ["LOCA_STORED"]);</script></td>
+    <td class="cell" align="center" colspan="3"><script>document.write (loca ["LOCA_DEFENSE"]);</script></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [210]);</script></td>
+    <td class="cell" align="right"><input id="numEP" size="11" value="0" tabindex="9" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisEP">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_METAL"]);</script></td>
+    <td class="cell" align="right"><input id="storedMetal" size="12" value="0" tabindex="28" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" colspan="2"><script>document.write (loca ["LOCA_RLS"]);</script></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededRL">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [211]);</script></td>
+    <td class="cell" align="right"><input id="numBM" size="11" value="0" tabindex="10" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisBM">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_CRYSTAL"]);</script></td>
+    <td class="cell" align="right"><input id="storedCrystal" size="12" value="0" tabindex="29" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" colspan="2"><script>document.write (loca ["LOCA_LLASERS"]);</script></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededLL">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [212]);</script></td>
+    <td class="cell" align="right"><input id="numSS" size="11" value="0" tabindex="11" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisSS">0</span></td>
+    <td class="cell"><script>document.write (loca ["LOCA_DEUTERIUM"]);</script></td>
+    <td class="cell" align="right"><input id="storedDeuterium" size="12" value="0" tabindex="30" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" colspan="2"><script>document.write (loca ["LOCA_HLASERS"]);</script></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededHL">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [213]);</script></td>
+    <td class="cell" align="right"><input id="numDR" size="11" value="0" tabindex="12" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisDR">0</span></td>
+    <td class="cell" colspan="2" align="center"><script>document.write (loca ["LOCA_TOTALRES"]);</script></td>
+    <td class="cell" colspan="2"><script>document.write (loca ["LOCA_GAUSS"]);</script></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededGC">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [214]);</script></td>
+    <td class="cell" align="right"><input id="numDS" size="11" value="0" tabindex="13" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisDS">0</span></td>
+    <td class="cell" align="center" colspan="2"><span id="totalResDetails">(0 + 0 + 0)</span></td>
+    <td class="cell" colspan="2"><script>document.write (loca ["LOCA_PLASMAS"]);</script></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededPT">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell"><script>document.write (TechNames [215]);</script></td>
+    <td class="cell" align="right"><input id="numBC" size="11" value="0" tabindex="14" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right"><span id="debrisBC">0</span></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_DEFENSE_COST"]);</script></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_METAL"]);</script></td>
+    <td class="cell" align="center" colspan="2"><script>document.write (loca ["LOCA_CRYSTAL"]);</script></td>
+    <td class="cell" align="center"><script>document.write (loca ["LOCA_DEUTERIUM"]);</script></td>
+  </tr>
+  <tr>
+    <td class="cell" colspan="2" align="right"><script>document.write (loca ["LOCA_TOTAL_DEBRIS"]);</script></td>
+    <td class="cell" align="right"><span id="debrisTotal">0</span></td>
+    <td class="cell" align="right"><script>document.write (loca ["LOCA_COST"]);</script></td>
+    <td class="cell" align="right"><span id="metTotal">0</span></td>
+    <td class="cell" align="right" colspan="2"><span id="cryTotal">0</span></td>
+    <td class="cell" align="right"><span id="deuTotal">0</span></td>
+  </tr>
+  <tr>
+    <td class="cell" colspan="3" align="center"><button type="button" onclick="speedSim ();" tabindex="31"><script>document.write (loca ["LOCA_SIMULATE"]);</script></button></td>
+    <td class="cell" align="right"><script>document.write (TechNames [203]);</script></td>
+    <td class="cell" align="right"><span id="totalLC">0</span></td>
+    <td class="cell" align="right" colspan="2"><script>document.write (TechNames [202]);</script></td>
+    <td class="cell" align="right"><span id="totalSC">0</span></td>
+  </tr>
+</table>
+<p>Copyright &copy; 2009-<script>var theDate = new Date (); document.write (theDate.getFullYear ());</script> by <a href="mailto:vbontchev@yahoo.com" style="color: white;">Vesselin Bontchev</a> (v. <script>document.write (version);</script>)</p>
+</center>
+</body>
+</html>
