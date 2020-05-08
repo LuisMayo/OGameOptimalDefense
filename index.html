@@ -298,6 +298,71 @@ switch (lang)
 			LOCA_SIMULATE: "Симулировать",
 		};
 		break;
+        case "es":
+		// -------------------------- Spanish ---------------------------------
+		var TechNames =
+		{
+			202: "Naves pequeñas de carga:",
+			203: "Naves grandes de carga:",
+			204: "Cazadores ligeros:",
+			205: "Cazadores pesados:",
+			206: "Cruceros:",
+			207: "Naves de batalla:",
+			208: "Colonizadores:",
+			209: "Recicladores:",
+			210: "Sondas de espionaje:",
+			211: "Bombarderos:",
+			212: "Satelites solares:",
+			213: "Destructores:",
+			214: "Estrellas de la muerte:",
+			215: "Battlecruisers:",
+		};
+		var loca =
+		{
+			LOCA_TITLE: "OGame - Defensa optima",
+			LOCA_LANG: "Idioma:",
+			LOCA_OLD_DESIGN: "Diseño viejo (v0.84)",
+			LOCA_NEW_DESIGN: "Diseño nuevo (v1.x) ",
+			LOCA_PERCENT_INTO_DEBRIS: "Porcentaje del campo de escombros:",
+			LOCA_PLUNDER_PERCENT: "Plunder pecent:",
+			LOCA_PLASMATECH: "Tecnología plasma:",
+			LOCA_SPEED_FACTOR: "Factor de velocidad:",
+			LOCA_ALLOFFICERS: "Todos los oficiales",
+            LOCA_COLLECTOR: "Clase recolector",
+			LOCA_GEOLOGIST: "Geólogo",
+			LOCA_FLEET: "Flota estacionada:",
+			LOCA_NUMBER: "Número:",
+			LOCA_DEBRIS: "Escombros:",
+			LOCA_MINES: "Minas:",
+			LOCA_LEVEL: "Nivel:",
+			LOCA_PERCENTAGE: "Porcentage:",
+			LOCA_BOOSTERS: "Potenciador:",
+			LOCA_PRODUCTION: "Producción:",
+			LOCA_MMINE: "Mina de metal:",
+			LOCA_CMINE: "Mina de cristal:",
+			LOCA_DMINE: "Sintetizador de deuterio:",
+			LOCA_REACTOR: "Reactor de fusión:",
+			LOCA_MAX_TEMP: "Temperatura máxima:",
+			LOCA_PRODUCTION: "Producción total:",
+			LOCA_HOURLY_PROD: "Producción por hora:",
+			LOCA_UNATTENDED: "Horas ausente(del juego):",
+			LOCA_STORED: "Recursos almacenados:",
+			LOCA_DEFENSE: "Defensas necesarias:",
+			LOCA_RLS: "Lanzamisiles:",
+			LOCA_LLASERS: "Láseres pequeños:",
+			LOCA_HLASERS: "Láseres grandes:",
+			LOCA_GAUSS: "Cañones gauss:",
+			LOCA_PLASMAS: "Cañones de plasma:",
+			LOCA_DEFENSE_COST: "Coste de la defensa:",
+			LOCA_METAL: "Metal:",
+			LOCA_CRYSTAL: "Cristal:",
+			LOCA_DEUTERIUM: "Deuterio:",
+			LOCA_TOTALRES: "Recursos totales:",
+			LOCA_TOTAL_DEBRIS: "Escombros totales:",
+			LOCA_COST: "Coste total:",
+			LOCA_SIMULATE: "Calcular en speedsim!",
+		};
+		break;
 	default:
 		lang = "en";
 		createCookie ("lang", "en", 9999);
@@ -760,6 +825,7 @@ window.onload = function ()
 <form name="lang_form">
 <script>document.write (loca ["LOCA_LANG"]);</script> <select name="lang" onchange="onLangChange ();">
 <option value="en">English</option>
+<option value="es">Español</option>
 <option value="bg">Български</option>
 <option value="fr">Français</option>
 <option value="pt">Português</option>
