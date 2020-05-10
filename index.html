@@ -752,8 +752,8 @@ function compute ()
 	var totalDeu = Math.max((producedDeuterium + storedDeuterium) - hiddenDeu, 0);
 	var totalResources = totalMet + totalCry + totalDeu;
 	var totalHidden = hiddenMet + hiddenCry + hiddenDeu;
-	document.getElementById ("totalResDetails").firstChild.nodeValue = (Math.max(totalResources - totalHidden, 0)) + " (" +
-		addDots (totalProd) + " + " + addDots (totalStored) + " - " + addDots (totalHidden) + ")";
+	document.getElementById ("totalResDetails").firstChild.nodeValue = (Math.round(Math.max(totalResources - totalHidden, 0))) + " (" +
+		addDots (Math.round(totalProd)) + " + " + addDots (Math.round(totalStored)) + " - " + addDots (Math.round(totalHidden)) + ")";
 	option = document.getElementById ("plunderPct");
 	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
 	var totalLoot = totDebris + totalResources * pct;
