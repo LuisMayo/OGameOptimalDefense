@@ -65,6 +65,8 @@ switch (lang)
 			LOCA_LANG: "Език:",
 			LOCA_OLD_DESIGN: "Старият дизайн (v0.84)",
 			LOCA_NEW_DESIGN: "Новият дизайн (v1.x) ",
+			LOCA_NORMAL_MODE: "Balanced mode",
+			LOCA_PACIFIC_MODE: "Pacific mode",
 			LOCA_PERCENT_INTO_DEBRIS: "Процент на рециклажа:",
 			LOCA_PLUNDER_PERCENT: "Процент заграбено:",
 			LOCA_PLASMATECH: "Плазмена технология:",
@@ -134,6 +136,8 @@ switch (lang)
 			LOCA_LANG: "Langue:",
 			LOCA_OLD_DESIGN: "Ancien Design (v0.84)",
 			LOCA_NEW_DESIGN: "Nouveau Design (v1.x) ",
+			LOCA_NORMAL_MODE: "Balanced mode",
+			LOCA_PACIFIC_MODE: "Pacific mode",
 			LOCA_PERCENT_INTO_DEBRIS: "Pourcentage dans les débris:",
 			LOCA_PLUNDER_PERCENT: "Pourcentage de pillage:",
 			LOCA_PLASMATECH: "Technologie Plasma:",
@@ -203,6 +207,8 @@ switch (lang)
 			LOCA_LANG: "Lingua:",
 			LOCA_OLD_DESIGN: "Design Antigo (v0.84)",
 			LOCA_NEW_DESIGN: "Novo Design (v1.x) ",
+			LOCA_NORMAL_MODE: "Balanced mode",
+			LOCA_PACIFIC_MODE: "Pacific mode",
 			LOCA_PERCENT_INTO_DEBRIS: "Percentagem de Destroços:",
 			LOCA_PLUNDER_PERCENT: "Percentagem de roubo:",
 			LOCA_PLASMATECH: "Tecnologia Plasma:",
@@ -271,6 +277,8 @@ switch (lang)
 			LOCA_LANG: "Язык:",
 			LOCA_OLD_DESIGN: "Старый дизайн (v0.84)",
 			LOCA_NEW_DESIGN: "Редизайн (v1.x) ",
+			LOCA_NORMAL_MODE: "Balanced mode",
+			LOCA_PACIFIC_MODE: "Pacific mode",
 			LOCA_PERCENT_INTO_DEBRIS: "Процент лома:",
 			LOCA_PLUNDER_PERCENT: "Процент захвата:",
 			LOCA_PLASMATECH: "Плазменная технология:",
@@ -339,6 +347,8 @@ switch (lang)
 			LOCA_LANG: "Idioma:",
 			LOCA_OLD_DESIGN: "Diseño viejo (v0.84)",
 			LOCA_NEW_DESIGN: "Diseño nuevo (v1.x) ",
+			LOCA_NORMAL_MODE: "Servidor equilibrado",
+			LOCA_PACIFIC_MODE: "Servidor pacifico",
 			LOCA_PERCENT_INTO_DEBRIS: "Porcentaje del campo de escombros:",
 			LOCA_PLUNDER_PERCENT: "Plunder pecent:",
 			LOCA_PLASMATECH: "Tecnología plasma:",
@@ -619,6 +629,7 @@ function compute ()
 	var plasmaTech  = parseInt (document.getElementById ("plasmaTech").value);
 	var speedFactor = parseInt (document.getElementById ("speedFactor").value);
 	var oldVersion = document.getElementById ("oldVersion").checked;
+	var pacificServer = document.getElementById ("pacificMode").checked;
 	var booster = 1.0;
 	option = document.getElementById ("metPct");
 	level  = parseInt (document.getElementById ("metLevel").value);
@@ -627,6 +638,9 @@ function compute ()
 	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
 	var metProd = Math.round (30 * level * Math.pow (1.1, level)) * pct;
 	var dailyMetNoBoost = metProd * 24;
+	if (pacificServer) {
+		metProd = metProd * 6 + metProd;
+	}
 	var metLevelPercent = Math.min(parseInt (document.getElementById ("metstore").value), 10) / 100;
 	var hiddenMet = dailyMetNoBoost * metLevelPercent;
 	if (! oldVersion)
@@ -642,7 +656,7 @@ function compute ()
 	pct = parseInt (option.options [option.selectedIndex].value) / 100;
 	booster += pct;
 	metProd *= booster;
-	metProd += (oldVersion) ? 20 : 30;
+	metProd += pacificServer ? 210 : ((oldVersion) ? 20 : 30);
 	metProd *= speedFactor;
 	metProd = (oldVersion) ? Math.floor (metProd) : Math.round (metProd);
 	document.getElementById ("metProd").firstChild.nodeValue = addDots (metProd);
@@ -653,6 +667,10 @@ function compute ()
 		level = 0;
 	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
 	var cryProd = Math.round (20 * level * Math.pow (1.1, level)) * pct;
+	var dailyCryNoBoost = cryProd * 24;
+	if (pacificServer) {
+		cryProd = cryProd * 6 + cryProd;
+	}
 	if (! oldVersion)
 	{
 		if (allOfficers)
@@ -666,10 +684,9 @@ function compute ()
 	pct = parseInt (option.options [option.selectedIndex].value) / 100;
 	booster += pct;
 	cryProd *= booster;
-	cryProd += (oldVersion) ? 10 : 15;
+	cryProd += pacificServer ? 105 : ((oldVersion) ? 10 : 15);
 	cryProd *= speedFactor;
 	cryProd = (oldVersion) ? Math.floor (cryProd) : Math.round (cryProd);
-	var dailyCryNoBoost = cryProd * 24;
 	var cryLevelPercent = Math.min(parseInt (document.getElementById ("crystore").value), 10) / 100;
 	var hiddenCry = dailyCryNoBoost * cryLevelPercent;
 	document.getElementById ("cryProd").firstChild.nodeValue = addDots (cryProd);
@@ -680,6 +697,10 @@ function compute ()
 		level = 0;
 	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
 	var deuProd = 10 * level * Math.pow (1.1, level);
+	var dailyDeuNoBoost = deuProd * 24;
+	if (pacificServer) {
+		deuProd = deuProd * 6 + deuProd;
+	}
 	if (! oldVersion)
 	{
 		if (allOfficers)
@@ -697,7 +718,6 @@ function compute ()
 	deuProd *= booster;
 	deuProd *= speedFactor;
 	deuProd = (oldVersion) ? Math.floor (deuProd) : Math.round (deuProd);
-	var dailyDeuNoBoost = deuProd * 24;
 	var deuLevelPercent = Math.min(parseInt (document.getElementById ("deustore").value), 10) / 100;
 	var hiddenDeu = dailyDeuNoBoost * deuLevelPercent;
 	document.getElementById ("deuProd").firstChild.nodeValue = addDots (deuProd);
@@ -884,6 +904,16 @@ window.onload = function ()
         <tr>
           <td class="cell" align="left" colspan="2">
             <input type="radio" id="newVersion" name="version" value="new" onchange="onVersionChange ();"><script>document.write (loca ["LOCA_NEW_DESIGN"]);</script>
+          </td>
+        </tr>
+		<tr>
+          <td class="cell" align="left" colspan="2">
+            <input type="radio" id="normalMode" name="mode" value="normal" checked onchange="onVersionChange ();"><script>document.write (loca ["LOCA_NORMAL_MODE"]);</script>
+          </td>
+        </tr>
+		<tr>
+          <td class="cell" align="left" colspan="2">
+            <input type="radio" id="pacificMode" name="mode" value="pacific" onchange="onVersionChange ();"><script>document.write (loca ["LOCA_PACIFIC_MODE"]);</script>
           </td>
         </tr>
       </table>
