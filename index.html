@@ -83,6 +83,9 @@ switch (lang)
 			LOCA_MMINE: "Мина за метал:",
 			LOCA_CMINE: "Мина за Кристал:",
 			LOCA_DMINE: "Синтезатор за Деутериум:",
+			LOCA_MSTORE: "Metal Storage:",
+			LOCA_CSTORE: "Crystal Storage:",
+			LOCA_DSTORE: "Deuterium Tank:",
 			LOCA_REACTOR: "Ядрен Реактор:",
 			LOCA_MAX_TEMP: "Максимална температура:",
 			LOCA_PRODUCTION: "Обща продукция:",
@@ -149,6 +152,9 @@ switch (lang)
 			LOCA_MMINE: "Mine de Métal:",
 			LOCA_CMINE: "Mine de Cristal:",
 			LOCA_DMINE: "Synthétiseur de Deutérium:",
+			LOCA_MSTORE: "Metal Storage:",
+			LOCA_CSTORE: "Crystal Storage:",
+			LOCA_DSTORE: "Deuterium Tank:",
 			LOCA_REACTOR: "Centrale électrique de Fusion:",
 			LOCA_MAX_TEMP: "Température Maximale:",
 			LOCA_PRODUCTION: "Production Totale:",
@@ -215,6 +221,9 @@ switch (lang)
 			LOCA_MMINE: "Mina de Metal:",
 			LOCA_CMINE: "Mina de Cristal:",
 			LOCA_DMINE: "Sintetizador de Deutério:",
+			LOCA_MSTORE: "Metal Storage:",
+			LOCA_CSTORE: "Crystal Storage:",
+			LOCA_DSTORE: "Deuterium Tank:",
 			LOCA_REACTOR: "Planta de Fusão:",
 			LOCA_MAX_TEMP: "Temperatura Máxima:",
 			LOCA_PRODUCTION: "Produção total:",
@@ -280,6 +289,9 @@ switch (lang)
 			LOCA_MMINE: "Рудник по добыче металла:",
 			LOCA_CMINE: "Рудник по добыче кристалла:",
 			LOCA_DMINE: "Синтезатор дейтерия:",
+			LOCA_MSTORE: "Metal Storage:",
+			LOCA_CSTORE: "Crystal Storage:",
+			LOCA_DSTORE: "Deuterium Tank:",
 			LOCA_REACTOR: "Термоядерная электростанция:",
 			LOCA_MAX_TEMP: "Максимальная температура:",
 			LOCA_PRODUCTION: "Общая выработка:",
@@ -345,6 +357,9 @@ switch (lang)
 			LOCA_MMINE: "Mina de metal:",
 			LOCA_CMINE: "Mina de cristal:",
 			LOCA_DMINE: "Sintetizador de deuterio:",
+			LOCA_MSTORE: "Almacén de metal:",
+			LOCA_CSTORE: "Almacén de cristal:",
+			LOCA_DSTORE: "Contenedor de deuterio:",
 			LOCA_REACTOR: "Reactor de fusión:",
 			LOCA_MAX_TEMP: "Temperatura máxima:",
 			LOCA_PRODUCTION: "Producción total:",
@@ -413,6 +428,9 @@ switch (lang)
 			LOCA_MMINE: "Metal Mine:",
 			LOCA_CMINE: "Crystal Mine:",
 			LOCA_DMINE: "Deuterium Synthesizer:",
+			LOCA_MSTORE: "Metal Storage:",
+			LOCA_CSTORE: "Crystal Storage:",
+			LOCA_DSTORE: "Deuterium Tank:",
 			LOCA_REACTOR: "Fusion Reactor:",
 			LOCA_MAX_TEMP: "Maximal Temperature:",
 			LOCA_PRODUCTION: "Total Production:",
@@ -608,6 +626,9 @@ function compute ()
 		level = 0;
 	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
 	var metProd = Math.round (30 * level * Math.pow (1.1, level)) * pct;
+	var dailyMetNoBoost = metProd * 24;
+	var metLevelPercent = Math.min(parseInt (document.getElementById ("metstore").value), 10) / 100;
+	var hiddenMet = dailyMetNoBoost * metLevelPercent;
 	if (! oldVersion)
 	{
 		if (allOfficers)
@@ -648,6 +669,9 @@ function compute ()
 	cryProd += (oldVersion) ? 10 : 15;
 	cryProd *= speedFactor;
 	cryProd = (oldVersion) ? Math.floor (cryProd) : Math.round (cryProd);
+	var dailyCryNoBoost = cryProd * 24;
+	var cryLevelPercent = Math.min(parseInt (document.getElementById ("crystore").value), 10) / 100;
+	var hiddenCry = dailyCryNoBoost * cryLevelPercent;
 	document.getElementById ("cryProd").firstChild.nodeValue = addDots (cryProd);
 	booster = 1.0;
 	option = document.getElementById ("deuPct");
@@ -673,6 +697,9 @@ function compute ()
 	deuProd *= booster;
 	deuProd *= speedFactor;
 	deuProd = (oldVersion) ? Math.floor (deuProd) : Math.round (deuProd);
+	var dailyDeuNoBoost = deuProd * 24;
+	var deuLevelPercent = Math.min(parseInt (document.getElementById ("deustore").value), 10) / 100;
+	var hiddenDeu = dailyDeuNoBoost * deuLevelPercent;
 	document.getElementById ("deuProd").firstChild.nodeValue = addDots (deuProd);
 	option = document.getElementById ("fusPct");
 	level  = parseInt (document.getElementById ("fusLevel").value);
@@ -700,11 +727,16 @@ function compute ()
 	var storedCrystal   = parseInt (document.getElementById ("storedCrystal").value);
 	var storedDeuterium = parseInt (document.getElementById ("storedDeuterium").value);
 	var totalStored = storedMetal + storedCrystal + storedDeuterium;
-	document.getElementById ("totalResDetails").firstChild.nodeValue = "(" +
-		addDots (producedMetal + storedMetal) + " + " + addDots (producedCrystal + storedCrystal) + " + " + addDots (producedDeuterium + storedDeuterium) + ")";
+	var totalMet = Math.max((producedMetal + storedMetal) - hiddenMet, 0);
+	var totalCry = Math.max((producedCrystal + storedCrystal) - hiddenCry, 0);
+	var totalDeu = Math.max((producedDeuterium + storedDeuterium) - hiddenDeu, 0);
+	var totalResources = totalMet + totalCry + totalDeu;
+	var totalHidden = hiddenMet + hiddenCry + hiddenDeu;
+	document.getElementById ("totalResDetails").firstChild.nodeValue = (Math.max(totalResources - totalHidden, 0)) + " (" +
+		addDots (totalProd) + " + " + addDots (totalStored) + " - " + addDots (totalHidden) + ")";
 	option = document.getElementById ("plunderPct");
 	pct    = parseInt (option.options [option.selectedIndex].value) / 100;
-	var totalLoot = totDebris + ((totalProd + totalStored) * pct);
+	var totalLoot = totDebris + totalResources * pct;
 	var neededPT = Math.ceil (5.0658556 * totalLoot * (70 / (100 - percentDebris)) / 100000);
 	var neededGC = Math.ceil (totalLoot / (10000 * ((100 - percentDebris) / 100)) - neededPT);
 	if (neededGC < 0)
@@ -856,7 +888,7 @@ window.onload = function ()
         </tr>
       </table>
     </td>
-    <td class="cell" align="center" colspan="3">
+    <td class="cell" align="center" colspan="5">
       <script>document.write (loca ["LOCA_PERCENT_INTO_DEBRIS"]);</script>&nbsp;<input id="percentIntoDebris" size="1" value="30" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();">&nbsp;%
     </td>
     <td class="cell" align="right" colspan="3">
@@ -869,7 +901,7 @@ window.onload = function ()
     </td>
   </tr>
   <tr>
-    <td class="cell" align="center" colspan="3">
+    <td class="cell" align="center" colspan="5">
       &nbsp;<script>document.write (loca ["LOCA_PLUNDER_PERCENT"]);</script>&nbsp;
       <select id="plunderPct" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
         <option value="50%">50%</option>
@@ -891,19 +923,22 @@ window.onload = function ()
     <td class="cell" align="center"><script>document.write (loca ["LOCA_FLEET"]);</script></td>
     <td class="cell" align="center"><button id="clearFleet" name="x" type="button" onclick="clearFleet ();">x</button>&nbsp;<script>document.write (loca ["LOCA_NUMBER"]);</script></td>
     <td class="cell" align="center" width="80"><script>document.write (loca ["LOCA_DEBRIS"]);</script></td>
-    <td class="cell" align="center"><script>document.write (loca ["LOCA_MINES"]);</script></td>
-    <td class="cell" align="center"><button id="clearMines" name="x" type="button" onclick="clearMines ();">x</button>&nbsp;<script>document.write (loca ["LOCA_LEVEL"]);</script></td>
+    <td class="cell" align="center" style="width: 115px"><script>document.write (loca ["LOCA_MINES"]);</script></td>
+    <td class="cell" align="center" colspan="3"><button id="clearMines" name="x" type="button" onclick="clearMines ();">x</button>&nbsp;<script>document.write (loca ["LOCA_LEVEL"]);</script></td>
     <td class="cell" align="center"><script>document.write (loca ["LOCA_PERCENTAGE"]);</script></td>
     <td class="cell" align="center"><script>document.write (loca ["LOCA_BOOSTERS"]);</script></td>
-    <td class="cell" align="center"><script>document.write (loca ["LOCA_PRODUCTION"]);</script></td>
+    <td class="cell" align="center" style="width: 55px"><script>document.write (loca ["LOCA_PRODUCTION"]);</script></td>
   </tr>
   <tr>
-    <td class="cell"><script>document.write (TechNames [202]);</script></td>
-    <td class="cell" align="right"><input id="numSC" size="11" value="0" tabindex="1" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
-    <td class="cell" align="right"><span id="debrisSC">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_MMINE"]);</script></td>
-    <td class="cell" align="right"><input id="metLevel" size="12" value="0" tabindex="15" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
-    <td class="cell" align="center">
+    <td class="cell" style="height: 32px"><script>document.write (TechNames [202]);</script></td>
+    <td class="cell" align="right" style="height: 32px"><input id="numSC" size="11" value="0" tabindex="1" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" style="height: 32px"><span id="debrisSC">0</span></td>
+    <td class="cell" style="width: 115px; height: 32px"><script>document.write (loca ["LOCA_MMINE"]);</script></td>
+    <td class="cell" align="right" style="width: 79px; height: 32px"><input id="metLevel" size="12" value="0" tabindex="15" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" style="width: 124px; height: 32px"><script>document.write (loca ["LOCA_MSTORE"]);</script></td>
+    <td class="cell" align="right" style="width: 77px; height: 32px">
+	<input id="metstore" size="12" value="0" tabindex="15" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="center" style="height: 32px">
       <select id="metPct" tabindex="19" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
         <option selected="selected" value="100%">100%</option>
         <option value="90%">90%</option>
@@ -918,7 +953,7 @@ window.onload = function ()
         <option value="0%">0%</option>
       </select>
     </td>
-    <td class="cell" align="center">
+    <td class="cell" align="center" style="height: 32px">
       <select id="metBooster" tabindex="23" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
         <option selected="selected" value="0%">0%</option>
         <option value="10%">10%</option>
@@ -926,14 +961,17 @@ window.onload = function ()
         <option value="30%">30%</option>
       </select>
     </td>
-    <td class="cell" align="right"><span id="metProd">0</span></td>
+    <td class="cell" align="right" style="width: 55px; height: 32px"><span id="metProd">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [203]);</script></td>
     <td class="cell" align="right"><input id="numLC" size="11" value="0" tabindex="2" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisLC">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_CMINE"]);</script></td>
-    <td class="cell" align="right"><input id="cryLevel" size="12" value="0" tabindex="16" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_CMINE"]);</script></td>
+    <td class="cell" align="right" style="width: 79px"><input id="cryLevel" size="12" value="0" tabindex="16" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" style="width: 124px"><script>document.write (loca ["LOCA_CSTORE"]);</script></td>
+    <td class="cell" align="right" style="width: 77px">
+	<input id="crystore" size="12" value="0" tabindex="16" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="center">
       <select id="cryPct" tabindex="20" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
         <option selected="selected" value="100%">100%</option>
@@ -957,14 +995,17 @@ window.onload = function ()
         <option value="30%">30%</option>
       </select>
     </td>
-    <td class="cell" align="right"><span id="cryProd">0</span></td>
+    <td class="cell" align="right" style="width: 55px"><span id="cryProd">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [204]);</script></td>
     <td class="cell" align="right"><input id="numLF" size="11" value="0" tabindex="3" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisLF">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_DMINE"]);</script></td>
-    <td class="cell" align="right"><input id="deuLevel" size="12" value="0" tabindex="17" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_DMINE"]);</script></td>
+    <td class="cell" align="right" style="width: 79px"><input id="deuLevel" size="12" value="0" tabindex="17" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" style="width: 124px"><script>document.write (loca ["LOCA_DSTORE"]);</script></td>
+    <td class="cell" align="right" style="width: 77px">
+	<input id="deustore" size="12" value="0" tabindex="17" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="center">
       <select id="deuPct" tabindex="21" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
         <option selected="selected" value="100%">100%</option>
@@ -988,14 +1029,14 @@ window.onload = function ()
         <option value="30%">30%</option>
       </select>
     </td>
-    <td class="cell" align="right"><span id="deuProd">0</span></td>
+    <td class="cell" align="right" style="width: 55px"><span id="deuProd">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [205]);</script></td>
     <td class="cell" align="right"><input id="numHF" size="11" value="0" tabindex="4" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisHF">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_REACTOR"]);</script></td>
-    <td class="cell" align="right"><input id="fusLevel" size="12" value="0" tabindex="18" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_REACTOR"]);</script></td>
+    <td class="cell" align="right" colspan="3"><input id="fusLevel" size="12" value="0" tabindex="18" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="center">
       <select id="fusPct" tabindex="22" onkeyup="compute ();" onChange="compute ();" onmousemove="compute ();">
         <option selected="selected" value="100%">100%</option>
@@ -1012,105 +1053,105 @@ window.onload = function ()
       </select>
     </td>
     <td class="cell" align="center"></td>
-    <td class="cell" align="right"><font color="red"><span id="fusProd">0</span></font></td>
+    <td class="cell" align="right" style="width: 55px"><font color="red"><span id="fusProd">0</span></font></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [206]);</script></td>
     <td class="cell" align="right"><input id="numCR" size="11" value="0" tabindex="5" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisCR">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_MAX_TEMP"]);</script></td>
-    <td class="cell" align="right"><input id="maxTemp" size="12" value="0" tabindex="26" style="text-align: right" onblur="chkval (this);" onkeyup="chkInt (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_MAX_TEMP"]);</script></td>
+    <td class="cell" align="right" colspan="3"><input id="maxTemp" size="12" value="0" tabindex="26" style="text-align: right" onblur="chkval (this);" onkeyup="chkInt (this); compute ();"></td>
     <td class="cell" colspan="3" align="center"><script>document.write (loca ["LOCA_PRODUCTION"]);</script></td>
   </tr>
   <tr>
-    <td class="cell"><script>document.write (TechNames [207]);</script></td>
-    <td class="cell" align="right"><input id="numBS" size="11" value="0" tabindex="6" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
-    <td class="cell" align="right"><span id="debrisBS">0</span></td>
-    <td class="cell" align="right"><script>document.write (loca ["LOCA_HOURLY_PROD"]);</script></td>
-    <td class="cell" align="right"><span id="prodHour">0</span></td>
-    <td class="cell" colspan="3" align="right"><span id="totalProd">0</span></td>
+    <td class="cell" style="height: 30px"><script>document.write (TechNames [207]);</script></td>
+    <td class="cell" align="right" style="height: 30px"><input id="numBS" size="11" value="0" tabindex="6" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" style="height: 30px"><span id="debrisBS">0</span></td>
+    <td class="cell" align="right" style="width: 115px; height: 30px;"><script>document.write (loca ["LOCA_HOURLY_PROD"]);</script></td>
+    <td class="cell" align="right" colspan="3" style="height: 30px"><span id="prodHour">0</span></td>
+    <td class="cell" colspan="3" align="right" style="height: 30px"><span id="totalProd">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [208]);</script></td>
     <td class="cell" align="right"><input id="numCS" size="11" value="0" tabindex="7" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisCS">0</span></td>
-    <td class="cell" align="right"><script>document.write (loca ["LOCA_UNATTENDED"]);</script></td>
-    <td class="cell" align="right"><input id="hours" size="12" value="0" tabindex="27" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" align="right" style="width: 115px"><script>document.write (loca ["LOCA_UNATTENDED"]);</script></td>
+    <td class="cell" align="right" colspan="3"><input id="hours" size="12" value="0" tabindex="27" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right" colspan="3"><span id="totalProdDetails">(0 + 0 + 0)</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [209]);</script></td>
     <td class="cell" align="right"><input id="numRC" size="11" value="0" tabindex="8" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisRC">0</span></td>
-    <td class="cell" align="center" colspan="2"><script>document.write (loca ["LOCA_STORED"]);</script></td>
+    <td class="cell" align="center" colspan="4"><script>document.write (loca ["LOCA_STORED"]);</script></td>
     <td class="cell" align="center" colspan="3"><script>document.write (loca ["LOCA_DEFENSE"]);</script></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [210]);</script></td>
     <td class="cell" align="right"><input id="numEP" size="11" value="0" tabindex="9" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisEP">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_METAL"]);</script></td>
-    <td class="cell" align="right"><input id="storedMetal" size="12" value="0" tabindex="28" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_METAL"]);</script></td>
+    <td class="cell" align="right" colspan="3"><input id="storedMetal" size="12" value="0" tabindex="28" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" colspan="2"><script>document.write (loca ["LOCA_RLS"]);</script></td>
-    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededRL">0</span></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black; width: 55px;"><span id="neededRL">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [211]);</script></td>
     <td class="cell" align="right"><input id="numBM" size="11" value="0" tabindex="10" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisBM">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_CRYSTAL"]);</script></td>
-    <td class="cell" align="right"><input id="storedCrystal" size="12" value="0" tabindex="29" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_CRYSTAL"]);</script></td>
+    <td class="cell" align="right" colspan="3"><input id="storedCrystal" size="12" value="0" tabindex="29" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" colspan="2"><script>document.write (loca ["LOCA_LLASERS"]);</script></td>
-    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededLL">0</span></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black; width: 55px;"><span id="neededLL">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [212]);</script></td>
     <td class="cell" align="right"><input id="numSS" size="11" value="0" tabindex="11" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisSS">0</span></td>
-    <td class="cell"><script>document.write (loca ["LOCA_DEUTERIUM"]);</script></td>
-    <td class="cell" align="right"><input id="storedDeuterium" size="12" value="0" tabindex="30" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
+    <td class="cell" style="width: 115px"><script>document.write (loca ["LOCA_DEUTERIUM"]);</script></td>
+    <td class="cell" align="right" colspan="3"><input id="storedDeuterium" size="12" value="0" tabindex="30" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" colspan="2"><script>document.write (loca ["LOCA_HLASERS"]);</script></td>
-    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededHL">0</span></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black; width: 55px;"><span id="neededHL">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [213]);</script></td>
     <td class="cell" align="right"><input id="numDR" size="11" value="0" tabindex="12" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisDR">0</span></td>
-    <td class="cell" colspan="2" align="center"><script>document.write (loca ["LOCA_TOTALRES"]);</script></td>
+    <td class="cell" colspan="4" align="center"><script>document.write (loca ["LOCA_TOTALRES"]);</script></td>
     <td class="cell" colspan="2"><script>document.write (loca ["LOCA_GAUSS"]);</script></td>
-    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededGC">0</span></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black; width: 55px;"><span id="neededGC">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [214]);</script></td>
     <td class="cell" align="right"><input id="numDS" size="11" value="0" tabindex="13" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisDS">0</span></td>
-    <td class="cell" align="center" colspan="2"><span id="totalResDetails">(0 + 0 + 0)</span></td>
+    <td class="cell" align="center" colspan="4"><span id="totalResDetails">(0 + 0 + 0)</span></td>
     <td class="cell" colspan="2"><script>document.write (loca ["LOCA_PLASMAS"]);</script></td>
-    <td class="cell" align="right" bgcolor="lime" style="color: black"><span id="neededPT">0</span></td>
+    <td class="cell" align="right" bgcolor="lime" style="color: black; width: 55px;"><span id="neededPT">0</span></td>
   </tr>
   <tr>
     <td class="cell"><script>document.write (TechNames [215]);</script></td>
     <td class="cell" align="right"><input id="numBC" size="11" value="0" tabindex="14" style="text-align: right" onblur="chkval (this);" onkeyup="chkPosNum (this); compute ();"></td>
     <td class="cell" align="right"><span id="debrisBC">0</span></td>
-    <td class="cell" align="center"><script>document.write (loca ["LOCA_DEFENSE_COST"]);</script></td>
-    <td class="cell" align="center"><script>document.write (loca ["LOCA_METAL"]);</script></td>
+    <td class="cell" align="center" style="width: 115px"><script>document.write (loca ["LOCA_DEFENSE_COST"]);</script></td>
+    <td class="cell" align="center" colspan="3"><script>document.write (loca ["LOCA_METAL"]);</script></td>
     <td class="cell" align="center" colspan="2"><script>document.write (loca ["LOCA_CRYSTAL"]);</script></td>
-    <td class="cell" align="center"><script>document.write (loca ["LOCA_DEUTERIUM"]);</script></td>
+    <td class="cell" align="center" style="width: 55px"><script>document.write (loca ["LOCA_DEUTERIUM"]);</script></td>
   </tr>
   <tr>
     <td class="cell" colspan="2" align="right"><script>document.write (loca ["LOCA_TOTAL_DEBRIS"]);</script></td>
     <td class="cell" align="right"><span id="debrisTotal">0</span></td>
-    <td class="cell" align="right"><script>document.write (loca ["LOCA_COST"]);</script></td>
-    <td class="cell" align="right"><span id="metTotal">0</span></td>
+    <td class="cell" align="right" style="width: 115px"><script>document.write (loca ["LOCA_COST"]);</script></td>
+    <td class="cell" align="right" colspan="3"><span id="metTotal">0</span></td>
     <td class="cell" align="right" colspan="2"><span id="cryTotal">0</span></td>
-    <td class="cell" align="right"><span id="deuTotal">0</span></td>
+    <td class="cell" align="right" style="width: 55px"><span id="deuTotal">0</span></td>
   </tr>
   <tr>
     <td class="cell" colspan="3" align="center"><button type="button" onclick="speedSim ();" tabindex="31"><script>document.write (loca ["LOCA_SIMULATE"]);</script></button></td>
-    <td class="cell" align="right"><script>document.write (TechNames [203]);</script></td>
-    <td class="cell" align="right"><span id="totalLC">0</span></td>
+    <td class="cell" align="right" style="width: 115px"><script>document.write (TechNames [203]);</script></td>
+    <td class="cell" align="right" colspan="3"><span id="totalLC">0</span></td>
     <td class="cell" align="right" colspan="2"><script>document.write (TechNames [202]);</script></td>
-    <td class="cell" align="right"><span id="totalSC">0</span></td>
+    <td class="cell" align="right" style="width: 55px"><span id="totalSC">0</span></td>
   </tr>
 </table>
 <p>Original Work: Copyright &copy; 2009-<script>var theDate = new Date (); document.write (theDate.getFullYear ());</script> by <a href="mailto:vbontchev@yahoo.com" style="color: white;">Vesselin Bontchev</a> (v. <script>document.write (version);</script>). Modifications made by <a href="https://github.com/LuisMayo" style="color: white;">Luis Mayo</a></p>
