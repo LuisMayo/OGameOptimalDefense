@@ -640,7 +640,7 @@ function compute ()
 	var metProd = Math.round (30 * level * Math.pow (1.1, level)) * pct;
 	var dailyMetNoBoost = metProd * 24;
 	if (pacificServer) {
-		metProd = metProd * 6 + metProd;
+		metProd = metProd * 7;
 	}
 	var metLevelPercent = Math.min(parseInt (document.getElementById ("metstore").value), 10) / 100;
 	var hiddenMet = dailyMetNoBoost * metLevelPercent;
@@ -670,7 +670,7 @@ function compute ()
 	var cryProd = Math.round (20 * level * Math.pow (1.1, level)) * pct;
 	var dailyCryNoBoost = cryProd * 24;
 	if (pacificServer) {
-		cryProd = cryProd * 6 + cryProd;
+		cryProd = cryProd * 7;
 	}
 	if (! oldVersion)
 	{
@@ -700,7 +700,7 @@ function compute ()
 	var deuProd = 10 * level * Math.pow (1.1, level);
 	var dailyDeuNoBoost = deuProd * 24;
 	if (pacificServer) {
-		deuProd = deuProd * 6 + deuProd;
+		deuProd = deuProd * 7;
 	}
 	if (! oldVersion)
 	{
